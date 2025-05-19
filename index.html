@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C to EasyC and EasyC to C Translator</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fredoka One', cursive;
+            background: #f7f7f7;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #4e9af1;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 90%;
+            max-width: 600px;
+            height: 150px;
+            font-size: 1.2rem;
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-family: 'Fredoka One', cursive;
+            outline: none;
+            resize: none;
+            background: #fff;
+            color: #333;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        button {
+            background: #4e9af1;
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 200px;
+        }
+
+        button:hover {
+            background: #367bb7;
+        }
+
+        pre {
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 20px;
+            display: none; /* Hidden initially */
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 1rem;
+            color: #888;
+        }
+
+        footer a {
+            color: #4e9af1;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>C to EasyC and EasyC to C Translator</h1>
+
+        <div id="cToEasyC">
+            <h2>C to EasyC Translator</h2>
+            <textarea id="inputC" placeholder="input C code here"></textarea>
+            <div class="button-container">
+                <button onclick="translateCtoEasyC()">Translate C to EasyC</button>
+                <button onclick="toggleMode()">Switch to EasyC to C</button>
+            </div>
+            <pre id="outputCtoEasyC"></pre>
+        </div>
+
+        <div id="easyCToC" style="display: none;">
+            <h2>EasyC to C Translator</h2>
+            <textarea id="inputEasyC" placeholder="input EasyC code here"></textarea>
+            <div class="button-container">
+                <button onclick="translateEasyCtoC()">Translate EasyC to C</button>
+                <button onclick="toggleMode()">Switch to C to EasyC</button>
+            </div>
+            <pre id="outputEasyCtoC"></pre>
+        </div>
+    </div>
+
+    <footer>
+        Made with ❤️ by <a href="https://www.tiktok.com/@Zundachiikawa" target="_blank">@Zundachiikawa on TikTok</a>
+    </footer>
+
+    <script>
+        function cToEasyC(cCode) {
+            let easyCCode = cCode;
+
+            easyCCode = easyCCode.replace(/int main\(\)/g, 'StartFunction main');
+            easyCCode = easyCCode.replace(/{/g, 'Begin');
+            easyCCode = easyCCode.replace(/}/g, 'Finish');
+            easyCCode = easyCCode.replace(/printf/g, 'SendInCons:');
+            easyCCode = easyCCode.replace(/int/g, 'Whole');
+            easyCCode = easyCCode.replace(/=/g, 'now');
+            easyCCode = easyCCode.replace(/for\s*\((.*);.*;.*\)/g, 'Loop $1 upTo');
+            easyCCode = easyCCode.replace(/return/g, 'GiveBack');
+            
+            return easyCCode;
+        }
+
+        function easyCtoC(easyCCode) {
+            let cCode = easyCCode;
+
+            cCode = cCode.replace(/StartFunction main/g, 'int main()');
+            cCode = cCode.replace(/Begin/g, '{');
+            cCode = cCode.replace(/Finish/g, '}');
+            cCode = cCode.replace(/SendInCons:/g, 'printf');
+            cCode = cCode.replace(/Whole/g, 'int');
+            cCode = cCode.replace(/=/g, '=');
+            cCode = cCode.replace(/Loop/g, 'for');
+            cCode = cCode.replace(/from/g, 'i =');
+            cCode = cCode.replace(/upTo/g, 'i <');
+            cCode = cCode.replace(/GiveBack/g, 'return');
+            
+            return cCode;
+        }
+
+        function translateCtoEasyC() {
+            const cCode = document.getElementById('inputC').value;
+
+            if (cCode.trim() === '') {
+                alert('Please enter C code!');
+                return;
+            }
+
+            const translatedCode = cToEasyC(cCode);
+            const output = document.getElementById('outputCtoEasyC');
+            output.textContent = translatedCode;
+            output.style.display = 'block'; // Show the output after translation
+        }
+
+        function translateEasyCtoC() {
+            const easyCCode = document.getElementById('inputEasyC').value;
+
+            if (easyCCode.trim() === '') {
+                alert('Please enter EasyC code!');
+                return;
+            }
+
+            const translatedCode = easyCtoC(easyCCode);
+            const output = document.getElementById('outputEasyCtoC');
+            output.textContent = translatedCode;
+            output.style.display = 'block'; // Show the output after translation
+        }
+
+        function toggleMode() {
+            const cToEasyCDiv = document.getElementById('cToEasyC');
+            const easyCToCDiv = document.getElementById('easyCToC');
+            const outputCtoEasyC = document.getElementById('outputCtoEasyC');
+            const outputEasyCtoC = document.getElementById('outputEasyCtoC');
+            
+            // Toggle visibility of both sections
+            cToEasyCDiv.style.display = cToEasyCDiv.style.display === 'none' ? 'block' : 'none';
+            easyCToCDiv.style.display = easyCToCDiv.style.display === 'none' ? 'block' : 'none';
+            
+            // Clear outputs
+            outputCtoEasyC.style.display = 'none';
+            outputEasyCtoC.style.display = 'none';
+
+            // Clear text areas
+            document.getElementById('inputC').value = '';
+            document.getElementById('inputEasyC').value = '';
+        }
+    </script>
+
+</body>
+</html>
